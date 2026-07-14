@@ -2,3 +2,7 @@
 /build/
 thirdparty/capstone/lib/*.a
 *.olean
+
+# Capstone headers are copied from source by thirdparty/capstone/build.sh
+# (a build artifact, like lib/*.a) — provisioned on `lake build`, not committed.
+thirdparty/capstone/include/capstone/

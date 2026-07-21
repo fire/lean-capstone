@@ -70,6 +70,20 @@ def micro : Mode := ⟨(1 : UInt32) <<< 4⟩   -- microMIPS
 def v9    : Mode := ⟨(1 : UInt32) <<< 4⟩   -- SPARC V9
 def riscv32 : Mode := ⟨(1 : UInt32) <<< 0⟩
 def riscv64 : Mode := ⟨(1 : UInt32) <<< 1⟩
+/-- RISC-V compressed-instruction extension ("C"). Needed to decode any
+16-bit compressed instruction -- e.g. GCC/Clang's default codegen for
+`-march=rv*gc` emits these routinely. Without this bit, `cs_disasm`
+does not error; it silently stops at the first instruction it can't
+decode and returns however many instructions it decoded before that
+point (zero, if the very first one is compressed) -- confirmed the
+hard way: `riscv64` alone against a real `riscv-none-elf-gcc -O2`
+output returned an empty instruction list with no error signal. -/
+def riscvC : Mode := ⟨(1 : UInt32) <<< 2⟩
+/-- RISC-V float/double extension ("F"/"D"). Needed to decode ANY
+floating-point instruction (`fadd.d`, `fmadd.d`, etc.) -- same silent-
+truncation failure mode as `riscvC` above if omitted and the code
+contains one. -/
+def riscvFD : Mode := ⟨(1 : UInt32) <<< 3⟩
 end Mode
 
 /-- One disassembled instruction. -/
